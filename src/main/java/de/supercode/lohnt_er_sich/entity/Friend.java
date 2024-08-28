@@ -33,7 +33,7 @@ public class Friend {
     private double income;
 
     @Column(nullable = false)
-    private boolean isSelfEmployed;
+    private boolean SelfEmployed;
 
     @Column(nullable = false)
     private boolean wasCustomer;

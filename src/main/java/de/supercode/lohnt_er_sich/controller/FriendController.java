@@ -19,21 +19,29 @@ public class FriendController {
         this.friendService = friendService;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Friend>> getAllFriends() {
-        List<Friend> friends = friendService.getAllFriends();
 
-        if (friends.size() == 0) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(friends, HttpStatus.OK);
+    @GetMapping("/search")
+    public ResponseEntity<List<Friend>> getFriendsSearchBy(@RequestParam(required = false) Long id,
+                                                           @RequestParam(required = false) Double income,
+                                                           @RequestParam(required = false) Boolean wasCustomer,
+                                                           @RequestParam(required = false) Boolean SelfEmployed,
+                                                           @RequestParam(required = false) Integer age) {
+        List<Friend> friendsList;
+
+        if (id != null) friendsList = List.of(friendService.getFriend(id));
+        else if(income != null && wasCustomer == true) friendsList = friendService.getAllFriendsByIncomeAndWasCustomer(income, wasCustomer);
+        else if (income != null && wasCustomer == null) friendsList = friendService.getFriendsByIncome(income);
+        else if (SelfEmployed != null) friendsList = friendService.getFriendsByIsSelfEmployed(SelfEmployed);
+        else if (age != null) friendsList = friendService.getFriendsByAge(age);
+        else friendsList = friendService.getAllFriends();
+
+
+
+        if (friendsList.size() == 0) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        else return new ResponseEntity<>(friendsList, HttpStatus.OK);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Friend> getFriend(@PathVariable long id) {
-        Friend existFriend = friendService.getFriend(id);
 
-        if (existFriend == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        else return new ResponseEntity<>(existFriend, HttpStatus.FOUND);
-    }
 
 
 
