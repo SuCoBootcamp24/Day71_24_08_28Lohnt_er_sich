@@ -61,10 +61,10 @@ public class FriendController {
         else return new ResponseEntity<>(updatedFriend, HttpStatus.OK);
     }
 
-    @DeleteMapping("{if}")
-    public ResponseEntity deleteFriend(@PathVariable Long id) {
-        if (friendService.deleteFriend(id)) return new ResponseEntity<>(null, HttpStatus.OK);
-        else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    @DeleteMapping("{id}")
+    public HttpStatus deleteFriend(@PathVariable Long id) {
+        if (friendService.deleteFriend(id)) return HttpStatus.OK;
+        else return HttpStatus.NOT_FOUND;
     }
 
 }
