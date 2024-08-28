@@ -1,10 +1,11 @@
 package de.supercode.lohnt_er_sich.controller;
 
+import de.supercode.lohnt_er_sich.dto.FriendDTO;
 import de.supercode.lohnt_er_sich.entity.Friend;
 import de.supercode.lohnt_er_sich.service.FriendService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,9 +20,33 @@ public class FriendController {
     }
 
     @GetMapping("/all")
-    public List<Friend> getAllFriends() {
-        return friendService.getAllFriends();
+    public ResponseEntity<List<Friend>> getAllFriends() {
+        List<Friend> friends = friendService.getAllFriends();
+
+        if (friends.size() == 0) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(friends, HttpStatus.OK);
     }
 
+    @PostMapping
+    public ResponseEntity<Friend> createFriend(@RequestBody FriendDTO friendDTO) {
+        Friend newFriend = friendService.createFriend(friendDTO);
+
+        if (newFriend == null) return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        else return new ResponseEntity<>(newFriend, HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<Friend> updateFriend(@RequestBody FriendDTO friendDTO) {
+        Friend updatedFriend = friendService.updateFriend(friendDTO);
+
+        if (updatedFriend == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        else return new ResponseEntity<>(updatedFriend, HttpStatus.OK);
+    }
+
+    @DeleteMapping("{if}")
+    public ResponseEntity deleteFriend(@PathVariable Long id) {
+        if (friendService.deleteFriend(id) == true) return new ResponseEntity<>(null, HttpStatus.OK);
+        else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
 
 }

@@ -23,7 +23,7 @@ public class Friend {
     @Column(nullable = false)
     private LocalDate birthday;
 
-    private String mobile;
+    private String phone;
 
     private String email;
 
