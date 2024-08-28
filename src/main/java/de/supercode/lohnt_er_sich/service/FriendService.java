@@ -22,8 +22,14 @@ public class FriendService {
         this.friendMapper = friendMapper;
     }
 
+
+
     public List<Friend> getAllFriends() {
         return friendRepository.findAll();
+    }
+
+    public Friend getFriend(long id) {
+        return friendRepository.findById(id).orElse(null);
     }
 
 

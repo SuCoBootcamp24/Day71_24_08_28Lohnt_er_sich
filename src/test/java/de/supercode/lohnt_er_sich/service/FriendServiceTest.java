@@ -120,6 +120,28 @@ class FriendServiceTest {
     }
 
     @Test
+    public void testGetFriend() {
+        when(mockFriendRepository.findById(anyLong())).thenReturn(Optional.of(friend1));
+
+        Friend result = mockFriendService.getFriend(1L);
+
+        assertEquals(friend1.getId(), result.getId());
+        assertEquals(friend1.getFirstname(), result.getFirstname());
+        assertEquals(friend1.getLastname(), result.getLastname());
+
+        verify(mockFriendRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    public void testGetFriend_NotExisting() {
+        when(mockFriendRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertNull(mockFriendService.getFriend(1L));
+
+        verify(mockFriendRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
     public void testGetAllFriends() {
 
         when(mockFriendRepository.findAll()).thenReturn(List.of(friend1, friend2, friend3));

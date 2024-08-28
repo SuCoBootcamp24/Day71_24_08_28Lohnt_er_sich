@@ -27,6 +27,16 @@ public class FriendController {
         return new ResponseEntity<>(friends, HttpStatus.OK);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<Friend> getFriend(@PathVariable long id) {
+        Friend existFriend = friendService.getFriend(id);
+
+        if (existFriend == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        else return new ResponseEntity<>(existFriend, HttpStatus.FOUND);
+    }
+
+
+
     @PostMapping
     public ResponseEntity<Friend> createFriend(@RequestBody FriendDTO friendDTO) {
         Friend newFriend = friendService.createFriend(friendDTO);
@@ -45,7 +55,7 @@ public class FriendController {
 
     @DeleteMapping("{if}")
     public ResponseEntity deleteFriend(@PathVariable Long id) {
-        if (friendService.deleteFriend(id) == true) return new ResponseEntity<>(null, HttpStatus.OK);
+        if (friendService.deleteFriend(id)) return new ResponseEntity<>(null, HttpStatus.OK);
         else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
