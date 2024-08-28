@@ -28,21 +28,21 @@ public class FriendController {
                                                            @RequestParam(required = false) Integer age) {
         List<Friend> friendsList;
 
-        if (id != null) friendsList = List.of(friendService.getFriend(id));
-        else if(income != null && wasCustomer == true) friendsList = friendService.getAllFriendsByIncomeAndWasCustomer(income, wasCustomer);
-        else if (income != null && wasCustomer == null) friendsList = friendService.getFriendsByIncome(income);
+        if (id != null) {
+            Friend friend = friendService.getFriend(id);
+            if (friend == null) return ResponseEntity.notFound().build();
+            else friendsList = List.of(friend);
+        }
+        else if(income != null && (wasCustomer != null && wasCustomer)) friendsList = friendService.getAllFriendsByIncomeAndWasCustomer(income, wasCustomer);
+        else if (income != null) friendsList = friendService.getFriendsByIncome(income);
+        else if (wasCustomer != null) friendsList = friendService.getAllFriendsWasCustomer(wasCustomer); // Default income 0.0 for all customers
         else if (SelfEmployed != null) friendsList = friendService.getFriendsByIsSelfEmployed(SelfEmployed);
         else if (age != null) friendsList = friendService.getFriendsByAge(age);
         else friendsList = friendService.getAllFriends();
 
-
-
-        if (friendsList.size() == 0) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if (friendsList.isEmpty()) return ResponseEntity.notFound().build();
         else return new ResponseEntity<>(friendsList, HttpStatus.OK);
     }
-
-
-
 
 
     @PostMapping

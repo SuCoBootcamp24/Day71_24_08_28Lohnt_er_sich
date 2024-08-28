@@ -69,17 +69,22 @@ public class FriendService {
     }
 
     public List<Friend> getAllFriendsByIncomeAndWasCustomer(Double income, Boolean wasCustomer) {
-        return friendRepository.findAllByIncomeGreaterThanAndWasCustomer(income, wasCustomer).stream()
+        return friendRepository.findAllByIncomeGreaterThanEqualAndWasCustomer(income, wasCustomer).stream()
                 .sorted(Comparator.comparing(Friend::getIncome).reversed())
                 .collect(Collectors.toList());
     }
 
     public List<Friend> getFriendsByIncome(Double income) {
-        return friendRepository.findAllByIncomeGreaterThan(income).stream()
+        return friendRepository.findAllByIncomeGreaterThanEqual(income).stream()
                .sorted(Comparator.comparing(Friend::getIncome).reversed())
                .collect(Collectors.toList());
     }
 
+    public List<Friend> getAllFriendsWasCustomer(Boolean wasCustomer) {
+        return friendRepository.findAllByWasCustomer(wasCustomer).stream()
+                .sorted(Comparator.comparing(Friend::getIncome).reversed())
+                .collect(Collectors.toList());
+    }
 
     public List<Friend> getFriendsByIsSelfEmployed(Boolean isSelfEmployed) {
         return friendRepository.findAllBySelfEmployed(isSelfEmployed).stream()
@@ -97,4 +102,6 @@ public class FriendService {
                 .sorted((f1, f2) -> f2.getBirthday().compareTo(f1.getBirthday())) // Sortiere absteigend nach Alter
                 .collect(Collectors.toList());
     }
+
+
 }

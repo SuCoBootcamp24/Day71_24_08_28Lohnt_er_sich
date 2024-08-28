@@ -25,7 +25,7 @@ public class FriendDTO {
 
     private double income;
 
-    private boolean isSelfEmployed;
+    private boolean SelfEmployed;
 
     private boolean wasCustomer;
 }

@@ -283,7 +283,7 @@ class FriendServiceTest {
         Boolean wasCustomer = true;
 
         // Angenommen, das Repository gibt eine Liste von Freunden zurück, die die Kriterien erfüllen
-        when(mockFriendRepository.findAllByIncomeGreaterThanAndWasCustomer(income, wasCustomer))
+        when(mockFriendRepository.findAllByIncomeGreaterThanEqualAndWasCustomer(income, wasCustomer))
                 .thenReturn(List.of(friend3, friend4));
 
         // Act
@@ -296,7 +296,7 @@ class FriendServiceTest {
         assertEquals("Alice", result.get(1).getFirstname());
 
         // Verify, dass die Repository-Methode einmal aufgerufen wurde
-        verify(mockFriendRepository, times(1)).findAllByIncomeGreaterThanAndWasCustomer(income, wasCustomer);
+        verify(mockFriendRepository, times(1)).findAllByIncomeGreaterThanEqualAndWasCustomer(income, wasCustomer);
     }
 
     @Test
@@ -306,7 +306,7 @@ class FriendServiceTest {
         Boolean wasCustomer = false;
 
         // Angenommen, das Repository gibt keine Freunde zurück, die die Kriterien erfüllen
-        when(mockFriendRepository.findAllByIncomeGreaterThanAndWasCustomer(income, wasCustomer))
+        when(mockFriendRepository.findAllByIncomeGreaterThanEqualAndWasCustomer(income, wasCustomer))
                 .thenReturn(List.of());
 
         // Act
@@ -317,13 +317,13 @@ class FriendServiceTest {
         assertEquals(0, result.size());
 
         // Verify, dass die Repository-Methode einmal aufgerufen wurde
-        verify(mockFriendRepository, times(1)).findAllByIncomeGreaterThanAndWasCustomer(income, wasCustomer);
+        verify(mockFriendRepository, times(1)).findAllByIncomeGreaterThanEqualAndWasCustomer(income, wasCustomer);
     }
 
     @Test
     public void getFriendsByIncome() {
         Double income = 70000.00;
-        when(mockFriendRepository.findAllByIncomeGreaterThan(income)).thenReturn(List.of(friend3, friend4));
+        when(mockFriendRepository.findAllByIncomeGreaterThanEqual(income)).thenReturn(List.of(friend3, friend4));
 
         List<Friend> result = mockFriendService.getFriendsByIncome(income);
 
@@ -333,14 +333,14 @@ class FriendServiceTest {
         assertEquals("Alice", result.get(1).getFirstname());
 
         // Verify, dass die Repository-Methode einmal aufgerufen wurde
-        verify(mockFriendRepository, times(1)).findAllByIncomeGreaterThan(income);
+        verify(mockFriendRepository, times(1)).findAllByIncomeGreaterThanEqual(income);
 
     }
 
     @Test
     public void getFriendsByIncome_NoMatch() {
         Double income = 50000.00;
-        when(mockFriendRepository.findAllByIncomeGreaterThan(income)).thenReturn(List.of());
+        when(mockFriendRepository.findAllByIncomeGreaterThanEqual(income)).thenReturn(List.of());
 
         List<Friend> result = mockFriendService.getFriendsByIncome(income);
 
@@ -348,9 +348,26 @@ class FriendServiceTest {
         assertEquals(0, result.size());
 
         // Verify, dass die Repository-Methode einmal aufgerufen wurde
-        verify(mockFriendRepository, times(1)).findAllByIncomeGreaterThan(income);
+        verify(mockFriendRepository, times(1)).findAllByIncomeGreaterThanEqual(income);
 
     }
+
+    @Test
+    public void testGetFriendsByWasCustomer() {
+        boolean wasCustomer = true;
+        when(mockFriendRepository.findAllByWasCustomer(wasCustomer)).thenReturn(List.of(friend1, friend2));
+
+        List<Friend> result = mockFriendService.getAllFriendsWasCustomer(wasCustomer);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("Jane", result.get(0).getFirstname());
+        assertEquals("John", result.get(1).getFirstname());
+
+        // Verify, dass die Repository-Methode einmal aufgerufen wurde
+        verify(mockFriendRepository, times(1)).findAllByWasCustomer(wasCustomer);
+    }
+
 
     @Test
     public void testGetFriendsByIsSelfEmployed() {
