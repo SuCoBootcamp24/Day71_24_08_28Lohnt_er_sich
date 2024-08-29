@@ -44,7 +44,7 @@ Die Freunde sollen Kategorisiert werden können und natürlich danach gefiltert 
 
 Die beziehung soll in eine "onToMany" -> "ManyToOne" Beziehung eingebunden werden
 
-## neue funktionen sind:
+## Neue funktionen sind:
 1. Neue Kategorie erstellen.
 2. Freunde zu einer Kategorie hinzufügen.
 3. Freunde von der Kategorie entfernen.
