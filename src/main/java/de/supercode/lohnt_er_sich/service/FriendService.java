@@ -42,7 +42,7 @@ public class FriendService {
         Optional<Friend> existFriend = friendRepository.findByFirstnameAndLastname(friendDTO.getFirstname(), friendDTO.getLastname());
         if (existFriend.isEmpty()) {
             Friend newFriend = friendRepository.save(friendMapper.toEntity(friendDTO));
-            categoryService.addFriendToCategory(newFriend, newFriend.getCategory());
+            if (friendDTO.getCategory() != null) categoryService.addFriendToCategory(newFriend, newFriend.getCategory());
             return newFriend;
         }
         else return null;
@@ -94,6 +94,7 @@ public class FriendService {
     public boolean deleteFriend(Long id) {
         Optional<Friend> existFriend = friendRepository.findById(id);
         if (existFriend.isPresent()) {
+            categoryService.removeFriendFromCategory(existFriend.get(), existFriend.get().getCategory());
             friendRepository.delete(existFriend.get());
             return true;
         }

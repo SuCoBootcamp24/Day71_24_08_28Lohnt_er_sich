@@ -1,6 +1,7 @@
 package de.supercode.lohnt_er_sich.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,11 +19,9 @@ public class Category {
 
     private String name;
 
-    @OneToMany
-    //@JsonIgnoreProperties("category")
+    @OneToMany(mappedBy = "category")
+    //@JsonIgnoreProperties("category") // Verhindert die Serialisierung der Kategorie innerhalb jedes Freundes
     private List<Friend> friendList;
-
-
 
     public void addFriend(Friend friend) {
         friendList.add(friend);

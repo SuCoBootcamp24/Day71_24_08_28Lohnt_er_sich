@@ -22,7 +22,6 @@ public class FriendController {
         this.categoryService = categoryService;
     }
 
-
     @GetMapping("/search")
     public ResponseEntity<List<Friend>> getFriendsSearchBy(@RequestParam(required = false) Long id,
                                                            @RequestParam(required = false) Double income,

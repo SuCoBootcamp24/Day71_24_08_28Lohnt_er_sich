@@ -4,6 +4,8 @@ import de.supercode.lohnt_er_sich.dto.CategoryDTO;
 import de.supercode.lohnt_er_sich.entity.Category;
 import de.supercode.lohnt_er_sich.entity.Friend;
 import de.supercode.lohnt_er_sich.repository.CategoryRepository;
+import de.supercode.lohnt_er_sich.repository.FriendRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +15,11 @@ import java.util.Optional;
 public class CategoryService {
 
     CategoryRepository categoryRepository;
+    FriendRepository friendRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, FriendRepository friendRepository) {
         this.categoryRepository = categoryRepository;
+        this.friendRepository = friendRepository;
     }
 
     public Optional<Category> getCategoryByName(String category) {
@@ -52,4 +56,19 @@ public class CategoryService {
 
     }
 
+    @Transactional
+    public boolean removeCategoryById(Long id) {
+        // Überprüfen, ob die Kategorie existiert
+        if (categoryRepository.existsById(id)) {
+            // Setze die Kategorie für alle Freunde auf null
+            friendRepository.updateCategoryToNullByCategoryId(id);
+
+            // Lösche die Kategorie
+            categoryRepository.deleteById(id);
+            return true;
+        } else {
+            // Kategorie wurde nicht gefunden
+            return false;
+        }
+    }
 }

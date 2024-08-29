@@ -4,6 +4,9 @@ package de.supercode.lohnt_er_sich.repository;
 import de.supercode.lohnt_er_sich.entity.Category;
 import de.supercode.lohnt_er_sich.entity.Friend;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,4 +26,10 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findAllByWasCustomer(Boolean wasCustomer);
 
     List<Friend> findAllByCategory(Category category);
+
+    List<Friend> findByCategory(Category category);
+
+    @Modifying
+    @Query("UPDATE Friend f SET f.category = null WHERE f.category.id = :id")
+    void updateCategoryToNullByCategoryId(@Param("id") Long id);
 }
