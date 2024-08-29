@@ -36,3 +36,23 @@ Neben den standard Queries wollen wir noch ein paar spezifische Queries haben:
 Vergiss nicht das Freundschaften nicht ewig halten, also solltest du auch Freunde entfernen können.
 
 Genauso entwickeln sich alle Menschen weiter, schaue wie du deine Entitäten updaten kannst.
+
+
+## Zusatz:
+
+Die Freunde sollen Kategorisiert werden können und natürlich danach gefiltert werden. 
+
+Die beziehung soll in eine "onToMany" -> "ManyToOne" Beziehung eingebunden werden
+
+## neue funktionen sind:
+1. Neue Kategorie erstellen.
+2. Freunde zu einer Kategorie hinzufügen.
+3. Freunde von der Kategorie entfernen.
+4. Kategorie Löschen
+5. Freunde nach Kategorie filtern. 
+
+
+- Beim hinzufügen und beim entfernen einer Ressource in der Beziehung wird automatisch auch die andere seite bearbeitet. 
+- beim Löschen der Kategorie werden alle damit verbundene Freunde angepasst (Der Kategorie speicher wird auf "null" gesetzt). 
+
+
