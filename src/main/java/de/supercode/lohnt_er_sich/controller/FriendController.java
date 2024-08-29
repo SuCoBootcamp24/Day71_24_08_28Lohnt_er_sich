@@ -2,6 +2,7 @@ package de.supercode.lohnt_er_sich.controller;
 
 import de.supercode.lohnt_er_sich.dto.FriendDTO;
 import de.supercode.lohnt_er_sich.entity.Friend;
+import de.supercode.lohnt_er_sich.service.CategoryService;
 import de.supercode.lohnt_er_sich.service.FriendService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,11 @@ import java.util.List;
 public class FriendController {
 
     FriendService friendService;
+    CategoryService categoryService;
 
-    public FriendController(FriendService friendService) {
+    public FriendController(FriendService friendService, CategoryService categoryService) {
         this.friendService = friendService;
+        this.categoryService = categoryService;
     }
 
 
@@ -25,6 +28,7 @@ public class FriendController {
                                                            @RequestParam(required = false) Double income,
                                                            @RequestParam(required = false) Boolean wasCustomer,
                                                            @RequestParam(required = false) Boolean SelfEmployed,
+                                                           @RequestParam(required = false) String category,
                                                            @RequestParam(required = false) Integer age) {
         List<Friend> friendsList;
 
@@ -35,8 +39,13 @@ public class FriendController {
         }
         else if(income != null && (wasCustomer != null && wasCustomer)) friendsList = friendService.getAllFriendsByIncomeAndWasCustomer(income, wasCustomer);
         else if (income != null) friendsList = friendService.getFriendsByIncome(income);
-        else if (wasCustomer != null) friendsList = friendService.getAllFriendsWasCustomer(wasCustomer); // Default income 0.0 for all customers
+        else if (wasCustomer != null) friendsList = friendService.getAllFriendsWasCustomer(wasCustomer);
         else if (SelfEmployed != null) friendsList = friendService.getFriendsByIsSelfEmployed(SelfEmployed);
+        else if (category!= null) {
+            if (categoryService.isCategoryExist(category))
+                friendsList = friendService.getAllFriendsByCategory(categoryService.getCategoryByName(category).get());
+            else friendsList = null;
+            }
         else if (age != null) friendsList = friendService.getFriendsByAge(age);
         else friendsList = friendService.getAllFriends();
 

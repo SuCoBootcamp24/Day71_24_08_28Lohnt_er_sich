@@ -1,6 +1,7 @@
 package de.supercode.lohnt_er_sich.service;
 
 import de.supercode.lohnt_er_sich.dto.FriendDTO;
+import de.supercode.lohnt_er_sich.entity.Category;
 import de.supercode.lohnt_er_sich.entity.Friend;
 import de.supercode.lohnt_er_sich.mapper.FriendMapper;
 import de.supercode.lohnt_er_sich.repository.FriendRepository;
@@ -18,10 +19,12 @@ public class FriendService {
 
     FriendRepository friendRepository;
     FriendMapper friendMapper;
+    CategoryService categoryService;
 
-    public FriendService(FriendRepository friendRepository, FriendMapper friendMapper) {
+    public FriendService(FriendRepository friendRepository, FriendMapper friendMapper,  CategoryService categoryService) {
         this.friendRepository = friendRepository;
         this.friendMapper = friendMapper;
+        this.categoryService = categoryService;
     }
 
 
@@ -37,26 +40,55 @@ public class FriendService {
 
     public Friend createFriend(FriendDTO friendDTO) {
         Optional<Friend> existFriend = friendRepository.findByFirstnameAndLastname(friendDTO.getFirstname(), friendDTO.getLastname());
-        if (existFriend.isEmpty()) return friendRepository.save(friendMapper.toEntity(friendDTO));
+        if (existFriend.isEmpty()) {
+            Friend newFriend = friendRepository.save(friendMapper.toEntity(friendDTO));
+            categoryService.addFriendToCategory(newFriend, newFriend.getCategory());
+            return newFriend;
+        }
         else return null;
     }
 
 
     public Friend updateFriend(FriendDTO friendDTO) {
-        Optional<Friend> existFriend = friendRepository.findById(friendDTO.getId());
-        if (existFriend.isPresent()) {
-            Friend friend = existFriend.get();
-            friend.setFirstname(friendDTO.getFirstname());
-            friend.setLastname(friendDTO.getLastname());
-            friend.setBirthday(friendDTO.getBirthday());
-            friend.setPhone(friendDTO.getPhone());
-            friend.setEmail(friendDTO.getEmail());
-            friend.setJob(friendDTO.getJob());
-            friend.setIncome(friendDTO.getIncome());
-            friend.setSelfEmployed(friendDTO.isSelfEmployed());
-            return friendRepository.save(friend);
+        return friendRepository.findById(friendDTO.getId())
+                .map(friend -> {
+                    // Aktualisiere nur die Felder, die sich ändern müssen
+                    updateNonNullFields(friendDTO, friend);
+                    updateCategory(friendDTO, friend);
+                    return friendRepository.save(friend);
+                })
+                .orElse(null);
+    }
+
+    private void updateNonNullFields(FriendDTO friendDTO, Friend friend) {
+        if (friendDTO.getFirstname() != null) friend.setFirstname(friendDTO.getFirstname());
+        if (friendDTO.getLastname() != null) friend.setLastname(friendDTO.getLastname());
+        if (friendDTO.getBirthday() != null) friend.setBirthday(friendDTO.getBirthday());
+        if (friendDTO.getPhone() != null) friend.setPhone(friendDTO.getPhone());
+        if (friendDTO.getEmail() != null) friend.setEmail(friendDTO.getEmail());
+        if (friendDTO.getJob() != null) friend.setJob(friendDTO.getJob());
+        if (friendDTO.getIncome() != null) friend.setIncome(friendDTO.getIncome());
+        friend.setSelfEmployed(friendDTO.isSelfEmployed());
+        friend.setWasCustomer(friendDTO.isWasCustomer());
+    }
+
+    private void updateCategory(FriendDTO friendDTO, Friend friend) {
+        String categoryName = friendDTO.getCategory();
+
+        if (categoryName != null) {
+            categoryService.getCategoryByName(categoryName).ifPresent(cat -> {
+                if (!cat.equals(friend.getCategory())) {
+                    if (friend.getCategory() != null) {
+                        categoryService.removeFriendFromCategory(friend, friend.getCategory());
+                    }
+                    friend.setCategory(cat);
+                    categoryService.addFriendToCategory(friend, cat);
+                }
+            });
+        } else if (friend.getCategory() != null) {
+            categoryService.removeFriendFromCategory(friend, friend.getCategory());
+            friend.setCategory(null);
         }
-        return null;
     }
 
     public boolean deleteFriend(Long id) {
@@ -104,4 +136,8 @@ public class FriendService {
     }
 
 
+    public List<Friend> getAllFriendsByCategory(Category category) {
+        return friendRepository.findAllByCategory(category);
+
+    }
 }

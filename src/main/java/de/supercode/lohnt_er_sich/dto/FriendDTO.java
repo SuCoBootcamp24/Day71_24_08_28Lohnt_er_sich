@@ -23,9 +23,11 @@ public class FriendDTO {
 
     private String job;
 
-    private double income;
+    private Double income;
 
     private boolean SelfEmployed;
 
     private boolean wasCustomer;
+
+    private String category;
 }

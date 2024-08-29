@@ -1,5 +1,6 @@
 package de.supercode.lohnt_er_sich.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -30,12 +31,16 @@ public class Friend {
     private String job;
 
     @Column(nullable = false)
-    private double income;
+    private Double income;
 
     @Column(nullable = false)
     private boolean selfEmployed;
 
     @Column(nullable = false)
     private boolean wasCustomer;
+
+    @ManyToOne
+    //@JsonIgnoreProperties("friendList")
+    private Category category;
 
 }

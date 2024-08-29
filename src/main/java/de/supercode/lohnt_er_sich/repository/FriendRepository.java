@@ -1,6 +1,7 @@
 package de.supercode.lohnt_er_sich.repository;
 
 
+import de.supercode.lohnt_er_sich.entity.Category;
 import de.supercode.lohnt_er_sich.entity.Friend;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -20,4 +21,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findAllByIncomeGreaterThanEqual(Double income);
 
     List<Friend> findAllByWasCustomer(Boolean wasCustomer);
+
+    List<Friend> findAllByCategory(Category category);
 }

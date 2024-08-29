@@ -1,6 +1,7 @@
 package de.supercode.lohnt_er_sich.service;
 
 import de.supercode.lohnt_er_sich.dto.FriendDTO;
+import de.supercode.lohnt_er_sich.entity.Category;
 import de.supercode.lohnt_er_sich.entity.Friend;
 import de.supercode.lohnt_er_sich.mapper.FriendMapper;
 import de.supercode.lohnt_er_sich.repository.FriendRepository;
@@ -20,10 +21,13 @@ import static org.mockito.Mockito.*;
 class FriendServiceTest {
 
     @Mock
-    private FriendRepository mockFriendRepository;
+    FriendRepository mockFriendRepository;
 
     @Mock
     FriendMapper mockFriendMapper;
+
+    @Mock
+    CategoryService mockCategoryService;
 
     @InjectMocks
     private FriendService mockFriendService;
@@ -43,7 +47,7 @@ class FriendServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockFriendService = new FriendService(mockFriendRepository, mockFriendMapper);
+        mockFriendService = new FriendService(mockFriendRepository, mockFriendMapper, mockCategoryService);
 
         friendDTO1 = new FriendDTO();
         friendDTO1.setId(1L);
